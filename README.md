@@ -14,10 +14,11 @@ Get **Streamio-Orbit-Setup-x.y.z.exe** from the [latest release](../../releases/
 
 - It installs for your Windows user only (no admin prompt), into
   `%LOCALAPPDATA%\Programs\Streamio Orbit`, and adds Start menu and desktop shortcuts.
-- **Torrent streams need Stremio's streaming server.** It isn't open source, so it isn't bundled.
-  Streamio Orbit uses it from an installed [Stremio Service](https://github.com/Stremio/stremio-service/releases/latest)
-  or Stremio app. If neither is installed, Setup offers to open the Stremio Service download page.
-  Direct (HTTP/debrid) streams work without it.
+- **Torrents work out of the box.** They need Stremio's streaming server, which isn't open source,
+  so it isn't in this repo or the Setup file. Instead, if Stremio 5 or Stremio Service is already
+  installed, Streamio Orbit uses that. If not, Setup downloads the official
+  [Stremio Service](https://github.com/Stremio/stremio-service) package from Stremio's GitHub
+  (about 31 MB) and takes the server from it.
 - Needs Windows 10 or 11 with the Microsoft Edge WebView2 Runtime (built into Windows 11).
 - The installer isn't code-signed yet, so Windows SmartScreen may warn you the first time.
   Choose **More info → Run anyway**.

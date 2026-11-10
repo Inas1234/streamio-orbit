@@ -20,7 +20,10 @@ the links given.
 | Archivo (font) | Interface typeface | SIL Open Font License 1.1 | https://fonts.google.com/specimen/Archivo |
 
 Not bundled: Stremio's streaming server (`server.js`, `stremio-runtime.exe`) is not open source.
-Streamio Orbit uses the copy from an installed Stremio Service or Stremio app.
+Streamio Orbit uses the copy from an installed Stremio Service or Stremio app. If neither is
+installed, Setup downloads the official Stremio Service package from
+https://github.com/Stremio/stremio-service/releases and copies the server files (with Stremio
+Service's LICENSE.md, saved as STREMIO-SERVICE-LICENSE.md) into the install folder.
 
 Stremio is a trademark of its owners. Streamio Orbit is an unofficial project and is not
 affiliated with or endorsed by Stremio or Smart Code.

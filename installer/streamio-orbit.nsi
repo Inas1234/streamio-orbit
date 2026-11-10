@@ -79,6 +79,7 @@ Var HasServer
 !macroend
 Function DetectServer
   StrCpy $HasServer 0
+  !insertmacro _CheckServerDir "$INSTDIR"   ; fetched by an earlier install
   ReadRegStr $0 HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\${STREMIO_ID}" "InstallLocation"
   ${If} $0 != ""
     !insertmacro _CheckServerDir "$0"
@@ -147,9 +148,24 @@ Section "Install"
 
   Call CheckWebView2
   Call DetectServer
-  ; The finish-page checkbox is easy to miss, so say it plainly.
+  !ifdef FORCE_FETCH   ; test builds: act as if no Stremio is installed
+    StrCpy $HasServer 0
+  !endif
+  ; No Stremio 5 / Stremio Service here: fetch Stremio's own server package from Stremio's GitHub.
   ${If} $HasServer == 0
-    MessageBox MB_OK|MB_ICONINFORMATION "One more step for torrent streams: install Stremio 5 on this PC.$\r$\n$\r$\nStreamio Orbit plays torrents through Stremio's streaming server, which it isn't allowed to include. Get Stremio 5 from stremio.com (the next screen has a link), then start Streamio Orbit.$\r$\n$\r$\nDirect (HTTP/debrid) streams work without it." /SD IDOK
+    DetailPrint "Downloading Stremio's streaming server (about 31 MB) from Stremio's GitHub..."
+    InitPluginsDir
+    File "/oname=$PLUGINSDIR\fetch-server.ps1" "fetch-server.ps1"
+    nsExec::ExecToStack 'powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "$PLUGINSDIR\fetch-server.ps1" -Dest "$INSTDIR"'
+    Pop $0 ; exit code
+    Pop $1 ; output
+    ${If} $0 == 0
+      DetailPrint "Streaming server installed."
+      StrCpy $HasServer 1
+    ${Else}
+      DetailPrint "Couldn't download the streaming server: $1"
+      MessageBox MB_OK|MB_ICONINFORMATION "Streamio Orbit couldn't download Stremio's streaming server, which torrent streams need.$\r$\n$\r$\nCheck your internet connection and run Setup again, or install Stremio 5 from stremio.com (the next screen has a link).$\r$\n$\r$\nDirect (HTTP/debrid) streams work without it." /SD IDOK
+    ${EndIf}
   ${EndIf}
 SectionEnd
 
@@ -185,6 +201,8 @@ Section "Uninstall"
   Delete "$INSTDIR\*.dll"
   Delete "$INSTDIR\LICENSE.md"
   Delete "$INSTDIR\THIRD-PARTY-NOTICES.md"
+  Delete "$INSTDIR\server.js"
+  Delete "$INSTDIR\STREMIO-SERVICE-LICENSE.md"
 
   ; Sign-in, library cache and settings live next to the app. Keep them unless asked
   ; (silent uninstalls keep them too).
