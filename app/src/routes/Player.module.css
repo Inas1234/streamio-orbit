@@ -73,6 +73,23 @@
     color: var(--text-2);
     margin: 0 0 20px;
 }
+.steps {
+    text-align: left;
+    margin: -6px 0 16px;
+    padding-left: 22px;
+    color: var(--text);
+    line-height: 1.6;
+}
+.error .hint {
+    font-size: 13.5px;
+    color: var(--mute);
+}
+.errorActions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
 
 /* ---------- bars ---------- */
 

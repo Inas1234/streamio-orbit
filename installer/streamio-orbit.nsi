@@ -10,7 +10,8 @@ ManifestDPIAware true
 !define APP_ID     "StreamioOrbit"
 !define PUBLISHER  "Streamio Orbit (unofficial Stremio community fork)"
 !define HOMEPAGE   "https://github.com/Inas1234/streamio-orbit"
-!define SERVICE_URL "https://github.com/Stremio/stremio-service/releases/latest"
+!define STREMIO_URL "https://www.stremio.com/downloads"
+!define STREMIO_ID  "{DD3870DA-AF3C-4C73-B010-72944AB610C6}_is1" ; shared by Stremio 5 and Stremio Service
 !define WEBVIEW2_URL "https://go.microsoft.com/fwlink/p/?LinkId=2124703"
 !define UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_ID}"
 !ifndef VERSION
@@ -56,7 +57,7 @@ VIAddVersionKey "LegalCopyright" "GPL-3.0. Not affiliated with Stremio."
 !define MUI_FINISHPAGE_RUN_TEXT "Start ${APP_NAME}"
 !define MUI_FINISHPAGE_RUN_FUNCTION LaunchApp
 !define MUI_FINISHPAGE_SHOWREADME
-!define MUI_FINISHPAGE_SHOWREADME_TEXT "Get Stremio Service (needed for torrent streams)"
+!define MUI_FINISHPAGE_SHOWREADME_TEXT "Get Stremio 5 (needed for torrent streams)"
 !define MUI_FINISHPAGE_SHOWREADME_FUNCTION OpenServicePage
 !define MUI_PAGE_CUSTOMFUNCTION_SHOW FinishShow
 !insertmacro MUI_PAGE_FINISH
@@ -68,14 +69,27 @@ VIAddVersionKey "LegalCopyright" "GPL-3.0. Not affiliated with Stremio."
 
 Var HasServer
 
-; Stremio's streaming server isn't bundled (not open source); the app uses an installed one.
-Function DetectServer
-  StrCpy $HasServer 0
-  ${If} ${FileExists} "$LOCALAPPDATA\Programs\StremioService\server.js"
-    StrCpy $HasServer 1
-  ${ElseIf} ${FileExists} "$LOCALAPPDATA\Programs\Stremio\server.js"
+; Stremio's streaming server isn't bundled (not open source); the app uses the one from an
+; installed Stremio 5 or Stremio Service. (Stremio 4 has no separate server runtime.)
+!macro _CheckServerDir DIR
+  ${If} ${FileExists} "${DIR}\server.js"
+  ${AndIf} ${FileExists} "${DIR}\stremio-runtime.exe"
     StrCpy $HasServer 1
   ${EndIf}
+!macroend
+Function DetectServer
+  StrCpy $HasServer 0
+  ReadRegStr $0 HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\${STREMIO_ID}" "InstallLocation"
+  ${If} $0 != ""
+    !insertmacro _CheckServerDir "$0"
+  ${EndIf}
+  ReadRegStr $0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${STREMIO_ID}" "InstallLocation"
+  ${If} $0 != ""
+    !insertmacro _CheckServerDir "$0"
+  ${EndIf}
+  !insertmacro _CheckServerDir "$LOCALAPPDATA\Programs\StremioService"
+  !insertmacro _CheckServerDir "$LOCALAPPDATA\Programs\Stremio"
+  !insertmacro _CheckServerDir "$PROGRAMFILES64\Stremio"
 FunctionEnd
 
 Function CheckWebView2
@@ -133,6 +147,10 @@ Section "Install"
 
   Call CheckWebView2
   Call DetectServer
+  ; The finish-page checkbox is easy to miss, so say it plainly.
+  ${If} $HasServer == 0
+    MessageBox MB_OK|MB_ICONINFORMATION "One more step for torrent streams: install Stremio 5 on this PC.$\r$\n$\r$\nStreamio Orbit plays torrents through Stremio's streaming server, which it isn't allowed to include. Get Stremio 5 from stremio.com (the next screen has a link), then start Streamio Orbit.$\r$\n$\r$\nDirect (HTTP/debrid) streams work without it." /SD IDOK
+  ${EndIf}
 SectionEnd
 
 Function FinishShow
@@ -150,7 +168,7 @@ Function LaunchApp
 FunctionEnd
 
 Function OpenServicePage
-  ExecShell "open" "${SERVICE_URL}"
+  ExecShell "open" "${STREMIO_URL}"
 FunctionEnd
 
 Section "Uninstall"

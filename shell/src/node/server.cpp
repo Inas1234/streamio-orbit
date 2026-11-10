@@ -3,6 +3,8 @@
 #include <shlobj.h>
 #include <string>
 #include <thread>
+#include <vector>
+#include <utility>
 #include <atomic>
 #include <iostream>
 #include "../core/globals.h"
@@ -23,39 +25,66 @@ static void NodeOutputThreadProc()
     std::cout<<"NodeOutputThreadProc done.\n";
 }
 
-bool StartNodeServer()
+static std::wstring TrimSlashes(std::wstring s)
 {
-    std::wstring exeDir   = GetExeDirectory();
-    std::wstring exePath = exeDir + L"\\stremio-runtime.exe";
-    std::wstring scriptPath = exeDir + L"\\server.js";
+    while (!s.empty() && (s.back() == L'\\' || s.back() == L'/')) s.pop_back();
+    return s;
+}
 
-    if (!FileExists(exePath) || !FileExists(scriptPath)) {
-        // Public builds don't ship Stremio's streaming server: use the one from an installed
-        // Stremio Service, or from a regular Stremio install, both under %localappdata%\Programs.
-        wchar_t localAppData[MAX_PATH];
-        if (SUCCEEDED(SHGetFolderPathW(nullptr, CSIDL_LOCAL_APPDATA, nullptr, 0, localAppData))) {
-            bool found = false;
-            for (const wchar_t* sub : { L"\\Programs\\StremioService", L"\\Programs\\Stremio" }) {
-                std::wstring altDir = std::wstring(localAppData) + sub;
-                std::wstring altExePath = altDir + L"\\stremio-runtime.exe";
-                std::wstring altScriptPath = altDir + L"\\server.js";
-                if (FileExists(altExePath) && FileExists(altScriptPath)) {
-                    exePath = altExePath;
-                    scriptPath = altScriptPath;
-                    exeDir = altDir;
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                AppendToCrashLog(L"[NODE]: No streaming server found (not bundled, no Stremio Service or Stremio install).");
-                return false;
-            }
-        } else {
-            AppendToCrashLog(L"[NODE]: Failed to retrieve local app data path.");
-            return false;
+static std::wstring RegInstallLocation(HKEY root, const wchar_t* key)
+{
+    wchar_t buf[MAX_PATH * 2];
+    DWORD size = sizeof(buf);
+    if (RegGetValueW(root, key, L"InstallLocation", RRF_RT_REG_SZ, nullptr, buf, &size) == ERROR_SUCCESS)
+        return TrimSlashes(buf);
+    return L"";
+}
+
+static std::wstring KnownFolder(int csidl)
+{
+    wchar_t buf[MAX_PATH];
+    return SUCCEEDED(SHGetFolderPathW(nullptr, csidl, nullptr, 0, buf)) ? std::wstring(buf) : L"";
+}
+
+// Public builds don't ship Stremio's streaming server (it isn't open source), so it's taken from
+// an installed Stremio 5 or Stremio Service. Both installers share one Windows install ID, which
+// records where they went; the usual folders are checked too. (Stremio 4 has no separate server
+// runtime, so it can't be used here, but its server works while Stremio 4 itself is running.)
+static bool FindServerDir(std::wstring& dir)
+{
+    std::vector<std::wstring> candidates = { GetExeDirectory() };
+    const wchar_t* uninstallKey = L"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{DD3870DA-AF3C-4C73-B010-72944AB610C6}_is1";
+    const wchar_t* uninstallKey32 = L"Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{DD3870DA-AF3C-4C73-B010-72944AB610C6}_is1";
+    for (auto [root, key] : { std::pair{HKEY_CURRENT_USER, uninstallKey}, std::pair{HKEY_LOCAL_MACHINE, uninstallKey}, std::pair{HKEY_LOCAL_MACHINE, uninstallKey32} }) {
+        std::wstring loc = RegInstallLocation(root, key);
+        if (!loc.empty()) candidates.push_back(loc);
+    }
+    std::wstring local = KnownFolder(CSIDL_LOCAL_APPDATA);
+    std::wstring programFiles = KnownFolder(CSIDL_PROGRAM_FILES);
+    for (const wchar_t* sub : { L"\\Programs\\StremioService", L"\\Programs\\Stremio" })
+        if (!local.empty()) candidates.push_back(local + sub);
+    for (const wchar_t* sub : { L"\\StremioService", L"\\Stremio Service", L"\\Stremio" })
+        if (!programFiles.empty()) candidates.push_back(programFiles + sub);
+
+    for (const auto& c : candidates) {
+        if (FileExists(c + L"\\stremio-runtime.exe") && FileExists(c + L"\\server.js")) {
+            dir = c;
+            return true;
         }
     }
+    return false;
+}
+
+bool StartNodeServer()
+{
+    std::wstring exeDir;
+    if (!FindServerDir(exeDir)) {
+        AppendToCrashLog(L"[NODE]: No streaming server found (not bundled; no Stremio 5 or Stremio Service install). "
+                         L"Torrents work only if a Stremio server is already running.");
+        return false;
+    }
+    std::wstring exePath = exeDir + L"\\stremio-runtime.exe";
+    std::wstring scriptPath = exeDir + L"\\server.js";
 
     if (!g_serverJob) {
         g_serverJob = CreateJobObject(nullptr, nullptr);

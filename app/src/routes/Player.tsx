@@ -396,8 +396,13 @@ export function Player() {
         return () => window.clearTimeout(t);
     }, [encoded]);
     // The server may still be starting up; the app re-checks it in the background.
-    const serverDown = needsServer && server?.settings?.type === 'Err' && patienceOver;
-    const shownError = error ?? (serverDown ? "Torrent sources need Stremio's streaming server, and it isn't reachable from this app." : null);
+    const serverDown = !error && needsServer && server?.settings?.type === 'Err' && patienceOver;
+    const shownError = error ?? (serverDown ? 'server' : null);
+    const retryServer = () => {
+        setPatienceOver(false);
+        void core.dispatch({ action: 'StreamingServer', args: { action: 'Reload' } }, 'streaming_server');
+        window.setTimeout(() => setPatienceOver(true), 8_000);
+    };
     const loading = !shownError && (state.buffering !== false || state.duration === null);
     const torrent = useTorrentStats(loading && stream?.infoHash ? stream.infoHash : null, server?.selected?.transportUrl ?? null);
 
@@ -415,16 +420,44 @@ export function Player() {
                     {meta?.background && <Img className={s.loadingBg} src={meta.background} alt="" />}
                 </div>
             )}
-            {shownError && (
+            {shownError === 'server' ? (
                 <div className={s.center}>
                     <div className={s.error}>
-                        <h2>Can't play this source</h2>
-                        <p>{shownError}</p>
-                        <button className="btn btn-primary" onClick={leave}>
-                            Pick another source
-                        </button>
+                        <h2>Torrents need Stremio installed</h2>
+                        <p>
+                            This is a torrent source. Torrents play through Stremio's streaming server, which Streamio Orbit can't include, so it uses
+                            the one from the Stremio app.
+                        </p>
+                        <ol className={s.steps}>
+                            <li>Install Stremio 5 from stremio.com (Stremio 4 only works while it's open).</li>
+                            <li>Close and reopen Streamio Orbit.</li>
+                        </ol>
+                        <p className={s.hint}>Quick fix: open the Stremio app, leave it running, then press Try again.</p>
+                        <div className={s.errorActions}>
+                            <button className="btn btn-primary" onClick={() => shell.openExternal('https://www.stremio.com/downloads')}>
+                                Get Stremio
+                            </button>
+                            <button className="btn btn-ghost" onClick={retryServer}>
+                                Try again
+                            </button>
+                            <button className="btn btn-ghost" onClick={leave}>
+                                Pick another source
+                            </button>
+                        </div>
                     </div>
                 </div>
+            ) : (
+                shownError && (
+                    <div className={s.center}>
+                        <div className={s.error}>
+                            <h2>Can't play this source</h2>
+                            <p>{shownError}</p>
+                            <button className="btn btn-primary" onClick={leave}>
+                                Pick another source
+                            </button>
+                        </div>
+                    </div>
+                )
             )}
 
             <div className={`${s.top} ${showControls ? '' : s.hidden}`}>
