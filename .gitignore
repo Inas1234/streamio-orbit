@@ -1,0 +1,29 @@
+# Dependencies and build output
+node_modules/
+dist/
+app/tsconfig.tsbuildinfo
+shell/build-mingw/
+shell/deps/
+*.log
+
+# Built app, installer output and local tools (release/ also holds personal sign-in data)
+release/
+tools/
+*.WebView2/
+portable_config/
+
+# Local reference copies and assistant/editor files
+upstream/
+.superpowers/
+.playwright-mcp/
+.claude/
+.idea/
+shell/.idea/
+shell/.github/
+shell/.gitmodules
+
+# The original project's distribution files: Stremio's closed-source server, its ffmpeg,
+# installers and browser extensions. Not used by this build and not ours to publish.
+shell/utils/
+shell/extensions/
+shell/build/

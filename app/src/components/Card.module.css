@@ -1,0 +1,133 @@
+.card {
+    position: relative;
+    flex: 0 0 auto;
+    display: block;
+    width: var(--card-w, 300px);
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--bg-raised);
+    contain: layout paint;
+    outline-offset: 3px;
+    transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
+}
+.poster {
+    width: var(--poster-w, 180px);
+    aspect-ratio: 2 / 3;
+}
+.card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85);
+}
+
+.art,
+.art img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.art img {
+    transition: transform 0.6s var(--ease);
+}
+.card:hover .art img {
+    transform: scale(1.06);
+}
+
+.placeholder {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    text-align: center;
+    color: var(--mute);
+    font-weight: 600;
+}
+
+.shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.3) 40%, rgba(0, 0, 0, 0) 62%);
+}
+
+.body {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 12px;
+}
+.title {
+    font-size: 22px;
+    line-height: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.6);
+}
+.poster .title {
+    font-size: 19px;
+}
+.meta {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--text-2);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.track {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.18);
+}
+.bar {
+    height: 100%;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent);
+}
+
+.badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    pointer-events: none;
+}
+
+/* Top 10: a tall outlined numeral tucked behind the poster. */
+.ranked {
+    position: relative;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: flex-end;
+    padding-left: 70px;
+}
+.rank {
+    position: absolute;
+    left: -6px;
+    bottom: -18px;
+    font-size: 210px;
+    line-height: 1;
+    font-stretch: 62%;
+    font-weight: 900;
+    color: var(--bg);
+    -webkit-text-stroke: 3px color-mix(in oklab, var(--accent) 70%, #fff);
+    paint-order: stroke fill;
+    letter-spacing: -0.06em;
+    user-select: none;
+    pointer-events: none;
+}
+.ranked .card {
+    z-index: 1;
+}
+
+/* Posters carry their own title art; text on top would just repeat it. */
+.poster .body,
+.poster .shade {
+    display: none;
+}

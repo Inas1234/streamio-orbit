@@ -1,0 +1,28 @@
+.ring {
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.62);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+}
+/* Start the fill at 12 o'clock. */
+.arc {
+    transform: rotate(-90deg);
+}
+.track {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.22);
+    stroke-width: 3.5;
+}
+.fill {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 3.5;
+    stroke-linecap: round;
+}
+.done {
+    background: var(--green);
+    color: #06140d;
+}

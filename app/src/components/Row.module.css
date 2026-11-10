@@ -1,0 +1,86 @@
+.row {
+    margin-top: 28px;
+    /* Rows far off-screen skip layout and paint entirely. */
+    content-visibility: auto;
+    contain-intrinsic-size: auto 260px;
+}
+
+.head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 0 var(--gutter);
+    margin-bottom: 12px;
+}
+.title {
+    font-size: 28px;
+    margin: 0;
+}
+.more {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 13px;
+    color: var(--mute);
+    transition: color 0.15s;
+}
+.more:hover {
+    color: #fff;
+}
+
+.wrap {
+    position: relative;
+}
+
+.scroller {
+    --card-w: clamp(240px, 22vw, 340px);
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px var(--gutter) 18px;
+    scroll-padding: 0 var(--gutter);
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+}
+.scroller::-webkit-scrollbar {
+    display: none;
+}
+.scroller > * {
+    scroll-snap-align: start;
+}
+.posters {
+    --poster-w: clamp(140px, 12vw, 200px);
+}
+.rankedRow {
+    --poster-w: clamp(150px, 12.5vw, 210px);
+    gap: 4px;
+    padding-top: 14px;
+    padding-bottom: 26px;
+}
+
+.arrow {
+    position: absolute;
+    top: 8px;
+    bottom: 18px;
+    width: calc(var(--gutter) - 4px);
+    min-width: 40px;
+    display: grid;
+    place-items: center;
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.2s var(--ease);
+}
+.wrap:hover .arrow,
+.arrow:focus-visible {
+    opacity: 1;
+}
+.left {
+    left: 0;
+    background: linear-gradient(90deg, color-mix(in oklab, var(--bg) 92%, transparent), transparent);
+}
+.right {
+    right: 0;
+    background: linear-gradient(270deg, color-mix(in oklab, var(--bg) 92%, transparent), transparent);
+}

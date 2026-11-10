@@ -1,0 +1,474 @@
+.player {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: #000;
+    color: #fff;
+    user-select: none;
+}
+:global(body.playing) .player {
+    background: transparent;
+}
+.hideCursor {
+    cursor: none;
+}
+
+.videoWrap {
+    position: absolute;
+    inset: 0;
+}
+.video {
+    width: 100%;
+    height: 100%;
+}
+.video video,
+.video iframe {
+    width: 100%;
+    height: 100%;
+    /* Clicks go to the wrapper (play/pause), not into the YouTube frame. */
+    pointer-events: none;
+}
+
+.center {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+}
+.loadingBg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(24px) brightness(0.35);
+    z-index: -1;
+}
+.spinner {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.18);
+    border-top-color: #fff;
+    animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+.error {
+    pointer-events: auto;
+    text-align: center;
+    max-width: 420px;
+    background: rgba(23, 24, 29, 0.92);
+    padding: 28px;
+    border-radius: var(--radius-lg);
+}
+.error h2 {
+    margin: 0 0 8px;
+}
+.error p {
+    color: var(--text-2);
+    margin: 0 0 20px;
+}
+
+/* ---------- bars ---------- */
+
+.top,
+.bottom {
+    position: absolute;
+    left: 0;
+    right: 0;
+    padding: 20px 32px;
+    transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
+}
+.top {
+    top: 0;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));
+}
+.bottom {
+    bottom: 0;
+    padding-top: 60px;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
+}
+.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+.top.hidden {
+    transform: translateY(-8px);
+}
+.bottom.hidden {
+    transform: translateY(8px);
+}
+
+.titles {
+    flex: 1;
+    text-align: center;
+    min-width: 0;
+}
+.title {
+    font-weight: 700;
+    font-size: 17px;
+}
+.sub {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.65);
+    margin-top: 2px;
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+}
+.spacer {
+    flex: 1;
+}
+.iconBtn,
+.textBtn {
+    height: 44px;
+    min-width: 44px;
+    display: inline-grid;
+    place-items: center;
+    border-radius: 50%;
+    transition: background-color 0.15s, transform 0.15s;
+}
+.textBtn {
+    font-weight: 700;
+    font-size: 15px;
+    border-radius: 22px;
+    padding: 0 10px;
+}
+.iconBtn:hover,
+.textBtn:hover,
+.on {
+    background: rgba(255, 255, 255, 0.14);
+}
+.iconBtn:active {
+    transform: scale(0.92);
+}
+
+.volume {
+    display: flex;
+    align-items: center;
+}
+.volume input {
+    width: 0;
+    opacity: 0;
+    accent-color: #fff;
+    transition: width 0.2s var(--ease), opacity 0.2s;
+}
+.volume:hover input,
+.volume input:focus-visible {
+    width: 96px;
+    opacity: 1;
+    margin: 0 8px;
+}
+
+.time {
+    font-variant-numeric: tabular-nums;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.85);
+    margin-left: 10px;
+}
+
+/* ---------- seekbar ---------- */
+
+.seek {
+    position: relative;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    touch-action: none;
+}
+.seekTrack {
+    position: relative;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.22);
+    transition: height 0.15s var(--ease);
+}
+.seek:hover .seekTrack {
+    height: 6px;
+}
+.seekBuffered,
+.seekFill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    border-radius: 2px;
+}
+.seekBuffered {
+    background: rgba(255, 255, 255, 0.35);
+}
+.seekFill {
+    background: var(--accent);
+}
+.seekThumb {
+    position: absolute;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    margin: -7px 0 0 -7px;
+    border-radius: 50%;
+    background: var(--accent);
+    transform: scale(0);
+    transition: transform 0.15s var(--ease);
+}
+.seek:hover .seekThumb {
+    transform: scale(1);
+}
+.seekTip {
+    position: absolute;
+    bottom: 22px;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.85);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    pointer-events: none;
+}
+
+/* ---------- panels ---------- */
+
+.panel {
+    position: absolute;
+    right: 32px;
+    bottom: 112px;
+    width: 340px;
+    max-height: min(60vh, 520px);
+    display: flex;
+    flex-direction: column;
+    background: rgba(30, 31, 37, 0.94);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-lg);
+    padding: 10px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    animation: pop 0.18s var(--ease);
+}
+@keyframes pop {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+}
+.small {
+    width: 160px;
+}
+.episodes {
+    width: 420px;
+}
+.panelHead {
+    font-weight: 700;
+    font-size: 15px;
+    padding: 8px 10px;
+}
+.scroll {
+    overflow-y: auto;
+    min-height: 0;
+}
+.option {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
+    padding: 9px 10px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+.option:hover,
+.ep:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+.optionOn {
+    background: rgba(255, 255, 255, 0.14);
+    font-weight: 600;
+}
+.origin {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 400;
+}
+
+/* Subtitle size / position / delay, pinned under the track list. */
+.subStyle {
+    flex: none;
+    margin-top: 8px;
+    padding: 10px 6px 4px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.stepper {
+    display: grid;
+    grid-template-columns: 1fr 34px 76px 34px;
+    align-items: center;
+    gap: 6px;
+}
+.stepLabel {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.75);
+    padding-left: 4px;
+}
+.stepBtn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    font-size: 18px;
+    line-height: 1;
+    display: grid;
+    place-items: center;
+}
+.stepBtn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.18);
+}
+.stepBtn:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+.stepValue {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    border-radius: 8px;
+    padding: 6px 0;
+}
+button.stepValue:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.epHead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.seasonBtn {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    padding: 5px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    white-space: nowrap;
+}
+.seasonBtn:hover {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.45);
+}
+.epRow {
+    position: relative;
+}
+/* Watched toggle: shows on hover (or keyboard focus), stays visible once watched. */
+.epCheck {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.45);
+    background: rgba(20, 20, 24, 0.85);
+    color: rgba(255, 255, 255, 0.8);
+    opacity: 0;
+    transition: opacity 0.15s, background-color 0.15s, border-color 0.15s;
+}
+.epRow:hover .epCheck,
+.epCheck:focus-visible {
+    opacity: 1;
+}
+.epCheck:hover {
+    border-color: #fff;
+    color: #fff;
+}
+.epCheckOn {
+    opacity: 1;
+    background: var(--green);
+    border-color: var(--green);
+    color: #fff;
+}
+.epCheckOn:hover {
+    border-color: #fff;
+}
+
+.ep {
+    width: 100%;
+    display: flex;
+    gap: 12px;
+    padding: 8px 46px 8px 8px;
+    border-radius: 8px;
+    text-align: left;
+}
+.epThumb {
+    position: relative;
+    flex: 0 0 120px;
+    aspect-ratio: 16 / 9;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #23242a;
+}
+.epThumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.watched {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    font-size: 9px;
+    font-weight: 700;
+    background: var(--green);
+    border-radius: 3px;
+    padding: 1px 5px;
+}
+.epBody {
+    min-width: 0;
+}
+.epNum {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.55);
+}
+.epTitle {
+    font-size: 14px;
+    font-weight: 600;
+}
+.epDesc {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.4;
+    margin-top: 3px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.torrent {
+    position: absolute;
+    top: calc(50% + 46px);
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.75);
+    font-variant-numeric: tabular-nums;
+}

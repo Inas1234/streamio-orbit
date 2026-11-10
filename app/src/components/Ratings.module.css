@@ -1,0 +1,50 @@
+.ratings {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+}
+.item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text);
+    font-weight: 600;
+    white-space: nowrap;
+}
+.in {
+    animation: fade 0.4s var(--ease) both;
+}
+@keyframes fade {
+    from {
+        opacity: 0;
+        transform: translateX(-4px);
+    }
+}
+.icon {
+    width: 17px;
+    height: 17px;
+    flex: none;
+}
+.mc {
+    display: inline-grid;
+    place-items: center;
+    min-width: 24px;
+    height: 20px;
+    padding: 0 4px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1;
+}
+.good {
+    background: #00ce7a;
+    color: #000;
+}
+.mixed {
+    background: #ffbd3f;
+    color: #000;
+}
+.bad {
+    background: #ff6874;
+    color: #000;
+}

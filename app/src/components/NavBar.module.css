@@ -1,0 +1,107 @@
+.nav {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 50;
+    height: var(--nav-h);
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    padding: 0 var(--gutter);
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0) 100%);
+    transition: background-color 0.25s var(--ease);
+}
+.solid {
+    background-color: color-mix(in oklab, var(--bg) 78%, transparent);
+    backdrop-filter: blur(18px) saturate(1.4);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.logo {
+    display: grid;
+    place-items: center;
+    color: var(--accent);
+    filter: drop-shadow(0 0 14px color-mix(in oklab, var(--accent) 45%, transparent));
+    transition: transform 0.3s var(--spring);
+}
+.logo:hover {
+    transform: scale(1.08);
+}
+
+.links {
+    display: flex;
+    gap: 28px;
+    font-size: 14px;
+}
+.links a {
+    position: relative;
+    color: var(--text-2);
+    padding: 6px 0;
+    font-size: 15px;
+    transition: color 0.15s;
+}
+.links a::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -4px;
+    width: 18px;
+    height: 3px;
+    margin-left: -9px;
+    border-radius: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transition: transform 0.3s var(--spring);
+}
+.links .active::after {
+    transform: scaleX(1);
+}
+.links a:hover {
+    color: #fff;
+}
+.links .active {
+    color: #fff;
+    font-weight: 600;
+}
+
+.right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.round {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    transition: background-color 0.15s;
+}
+.round:hover {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, #5b8def, #a46ee8);
+    font-weight: 700;
+    font-size: 15px;
+}
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+@media (max-width: 760px) {
+    .links {
+        display: none;
+    }
+}

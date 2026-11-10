@@ -1,0 +1,176 @@
+.center {
+    min-height: 100%;
+    display: grid;
+    place-items: center;
+    padding: calc(var(--nav-h) + 24px) var(--gutter) 48px;
+}
+.card {
+    width: min(420px, 100%);
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+}
+.cardTitle {
+    margin: 0 0 6px;
+    font-size: 40px;
+    font-stretch: 72%;
+    font-weight: 800;
+}
+
+.field {
+    display: block;
+    margin-top: 16px;
+}
+.field span {
+    display: block;
+    font-size: 13px;
+    color: var(--text-2);
+    margin-bottom: 6px;
+}
+
+.input {
+    width: 100%;
+    height: 46px;
+    padding: 0 16px;
+    border-radius: var(--radius);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    outline: none;
+    transition: border-color 0.15s;
+}
+.input:focus {
+    border-color: #55565e;
+}
+
+.inline {
+    display: flex;
+    gap: 10px;
+    max-width: 720px;
+}
+.inline .input {
+    flex: 1;
+    min-width: 0;
+}
+
+.hint {
+    color: var(--mute);
+    font-size: 14px;
+    margin: 6px 0 12px;
+}
+.error {
+    color: #ff8589;
+    font-size: 14px;
+    margin: 10px 0 0;
+}
+.ok {
+    color: #8fd19e;
+    font-size: 14px;
+    margin: 10px 0 0;
+}
+
+.section {
+    padding: 24px 0;
+    border-top: 1px solid var(--line);
+}
+.h2 {
+    font-size: 17px;
+    margin: 0 0 8px;
+}
+.row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    cursor: pointer;
+}
+.toggle input {
+    appearance: none;
+    width: 44px;
+    height: 26px;
+    border-radius: 13px;
+    background: #3a3b42;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.toggle input::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform 0.2s var(--ease);
+}
+.toggle input:checked {
+    background: var(--accent);
+}
+.toggle input:checked::after {
+    transform: translateX(18px);
+}
+
+.list {
+    list-style: none;
+    padding: 0;
+    margin: 28px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 920px;
+}
+.addon {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 16px;
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+}
+.addonLogo {
+    flex: 0 0 52px;
+    height: 52px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--bg-hover);
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 20px;
+}
+.addonLogo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.addonText {
+    flex: 1;
+    min-width: 0;
+}
+.addonName {
+    font-weight: 600;
+}
+.version {
+    color: var(--mute);
+    font-weight: 400;
+    font-size: 12px;
+    margin-left: 6px;
+}
+.addonDesc {
+    color: var(--mute);
+    font-size: 13px;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
