@@ -454,8 +454,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@stremio/libass-wasm@https://release-assets.githubusercontent.com/github-production-release-asset/1242289186/e56e443a-c554-4a9f-af02-715563220be7?sp=r&sv=2018-11-09&sr=b&spr=https&se=2026-11-10T00%3A29%3A27Z&rscd=attachment%3B+filename%3Dstremio-libass-wasm-4.2.7.tgz&rsct=application%2Foctet-stream&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2026-11-09T23%3A28%3A41Z&ske=2026-11-10T00%3A29%3A27Z&sks=b&skv=2018-11-09&sig=hcSXPbH9PdwKehU0pRFHCK4dgVLRrRAOKSqfD0lRE9w%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc5NDI2NzQ4MywibmJmIjoxNzk0MjY3MTgzLCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.Cd3SLY7_eZQR2EQ5Ku-OhfQpJNiERAaa_K0rIAkBH34&response-content-disposition=attachment%3B%20filename%3Dstremio-libass-wasm-4.2.7.tgz&response-content-type=application%2Foctet-stream':
-    resolution: {tarball: https://release-assets.githubusercontent.com/github-production-release-asset/1242289186/e56e443a-c554-4a9f-af02-715563220be7?sp=r&sv=2018-11-09&sr=b&spr=https&se=2026-11-10T00%3A29%3A27Z&rscd=attachment%3B+filename%3Dstremio-libass-wasm-4.2.7.tgz&rsct=application%2Foctet-stream&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2026-11-09T23%3A28%3A41Z&ske=2026-11-10T00%3A29%3A27Z&sks=b&skv=2018-11-09&sig=hcSXPbH9PdwKehU0pRFHCK4dgVLRrRAOKSqfD0lRE9w%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc5NDI2NzQ4MywibmJmIjoxNzk0MjY3MTgzLCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.Cd3SLY7_eZQR2EQ5Ku-OhfQpJNiERAaa_K0rIAkBH34&response-content-disposition=attachment%3B%20filename%3Dstremio-libass-wasm-4.2.7.tgz&response-content-type=application%2Foctet-stream}
+  '@stremio/libass-wasm@https://github.com/Stremio/JavascriptSubtitlesOctopus/releases/download/v4.2.7/stremio-libass-wasm-4.2.7.tgz':
+    resolution: {tarball: https://github.com/Stremio/JavascriptSubtitlesOctopus/releases/download/v4.2.7/stremio-libass-wasm-4.2.7.tgz}
     version: 4.2.7
 
   '@stremio/stremio-core-web@0.66.0':
@@ -636,8 +636,8 @@ packages:
   hat@0.0.3:
     resolution: {integrity: sha512-zpImx2GoKXy42fVDSEad2BPKuSQdLcqsCYa48K3zHSzM/ugWuYjLDr8IXxpVuL7uCLHw56eaiLxCRthhOzf5ug==}
 
-  hls.js@https://release-assets.githubusercontent.com/github-production-release-asset/410799361/07b7b217-b85f-4eb4-a10f-4651dc8e95a1?sp=r&sv=2018-11-09&sr=b&spr=https&se=2026-11-10T00%3A30%3A30Z&rscd=attachment%3B+filename%3Dhls.js-1.5.4-patch2.tgz&rsct=application%2Foctet-stream&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2026-11-09T23%3A30%3A18Z&ske=2026-11-10T00%3A30%3A30Z&sks=b&skv=2018-11-09&sig=9x9oAWL8%2BygY0Vra6nkxYLvSRk0T1FgmIqcRZSxogts%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc5NDI2NzQ4MywibmJmIjoxNzk0MjY3MTgzLCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.Cd3SLY7_eZQR2EQ5Ku-OhfQpJNiERAaa_K0rIAkBH34&response-content-disposition=attachment%3B%20filename%3Dhls.js-1.5.4-patch2.tgz&response-content-type=application%2Foctet-stream:
-    resolution: {tarball: https://release-assets.githubusercontent.com/github-production-release-asset/410799361/07b7b217-b85f-4eb4-a10f-4651dc8e95a1?sp=r&sv=2018-11-09&sr=b&spr=https&se=2026-11-10T00%3A30%3A30Z&rscd=attachment%3B+filename%3Dhls.js-1.5.4-patch2.tgz&rsct=application%2Foctet-stream&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2026-11-09T23%3A30%3A18Z&ske=2026-11-10T00%3A30%3A30Z&sks=b&skv=2018-11-09&sig=9x9oAWL8%2BygY0Vra6nkxYLvSRk0T1FgmIqcRZSxogts%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc5NDI2NzQ4MywibmJmIjoxNzk0MjY3MTgzLCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.Cd3SLY7_eZQR2EQ5Ku-OhfQpJNiERAaa_K0rIAkBH34&response-content-disposition=attachment%3B%20filename%3Dhls.js-1.5.4-patch2.tgz&response-content-type=application%2Foctet-stream}
+  hls.js@https://github.com/Stremio/hls.js/releases/download/v1.5.4-patch2/hls.js-1.5.4-patch2.tgz:
+    resolution: {tarball: https://github.com/Stremio/hls.js/releases/download/v1.5.4-patch2/hls.js-1.5.4-patch2.tgz}
     version: 1.5.5-0.canary.9893
 
   ieee754@1.2.1:
@@ -1148,7 +1148,7 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.68.2':
     optional: true
 
-  '@stremio/libass-wasm@https://release-assets.githubusercontent.com/github-production-release-asset/1242289186/e56e443a-c554-4a9f-af02-715563220be7?sp=r&sv=2018-11-09&sr=b&spr=https&se=2026-11-10T00%3A29%3A27Z&rscd=attachment%3B+filename%3Dstremio-libass-wasm-4.2.7.tgz&rsct=application%2Foctet-stream&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2026-11-09T23%3A28%3A41Z&ske=2026-11-10T00%3A29%3A27Z&sks=b&skv=2018-11-09&sig=hcSXPbH9PdwKehU0pRFHCK4dgVLRrRAOKSqfD0lRE9w%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc5NDI2NzQ4MywibmJmIjoxNzk0MjY3MTgzLCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.Cd3SLY7_eZQR2EQ5Ku-OhfQpJNiERAaa_K0rIAkBH34&response-content-disposition=attachment%3B%20filename%3Dstremio-libass-wasm-4.2.7.tgz&response-content-type=application%2Foctet-stream': {}
+  '@stremio/libass-wasm@https://github.com/Stremio/JavascriptSubtitlesOctopus/releases/download/v4.2.7/stremio-libass-wasm-4.2.7.tgz': {}
 
   '@stremio/stremio-core-web@0.66.0':
     dependencies:
@@ -1156,13 +1156,13 @@ snapshots:
 
   '@stremio/stremio-video@0.0.103':
     dependencies:
-      '@stremio/libass-wasm': https://release-assets.githubusercontent.com/github-production-release-asset/1242289186/e56e443a-c554-4a9f-af02-715563220be7?sp=r&sv=2018-11-09&sr=b&spr=https&se=2026-11-10T00%3A29%3A27Z&rscd=attachment%3B+filename%3Dstremio-libass-wasm-4.2.7.tgz&rsct=application%2Foctet-stream&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2026-11-09T23%3A28%3A41Z&ske=2026-11-10T00%3A29%3A27Z&sks=b&skv=2018-11-09&sig=hcSXPbH9PdwKehU0pRFHCK4dgVLRrRAOKSqfD0lRE9w%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc5NDI2NzQ4MywibmJmIjoxNzk0MjY3MTgzLCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.Cd3SLY7_eZQR2EQ5Ku-OhfQpJNiERAaa_K0rIAkBH34&response-content-disposition=attachment%3B%20filename%3Dstremio-libass-wasm-4.2.7.tgz&response-content-type=application%2Foctet-stream
+      '@stremio/libass-wasm': https://github.com/Stremio/JavascriptSubtitlesOctopus/releases/download/v4.2.7/stremio-libass-wasm-4.2.7.tgz
       buffer: 6.0.3
       color: 4.2.3
       deep-freeze: 0.0.1
       eventemitter3: 4.0.7
       hat: 0.0.3
-      hls.js: https://release-assets.githubusercontent.com/github-production-release-asset/410799361/07b7b217-b85f-4eb4-a10f-4651dc8e95a1?sp=r&sv=2018-11-09&sr=b&spr=https&se=2026-11-10T00%3A30%3A30Z&rscd=attachment%3B+filename%3Dhls.js-1.5.4-patch2.tgz&rsct=application%2Foctet-stream&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2026-11-09T23%3A30%3A18Z&ske=2026-11-10T00%3A30%3A30Z&sks=b&skv=2018-11-09&sig=9x9oAWL8%2BygY0Vra6nkxYLvSRk0T1FgmIqcRZSxogts%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc5NDI2NzQ4MywibmJmIjoxNzk0MjY3MTgzLCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.Cd3SLY7_eZQR2EQ5Ku-OhfQpJNiERAaa_K0rIAkBH34&response-content-disposition=attachment%3B%20filename%3Dhls.js-1.5.4-patch2.tgz&response-content-type=application%2Foctet-stream
+      hls.js: https://github.com/Stremio/hls.js/releases/download/v1.5.4-patch2/hls.js-1.5.4-patch2.tgz
       lodash.clonedeep: 4.5.0
       magnet-uri: 6.2.0
       url: 0.11.4
@@ -1362,7 +1362,7 @@ snapshots:
 
   hat@0.0.3: {}
 
-  hls.js@https://release-assets.githubusercontent.com/github-production-release-asset/410799361/07b7b217-b85f-4eb4-a10f-4651dc8e95a1?sp=r&sv=2018-11-09&sr=b&spr=https&se=2026-11-10T00%3A30%3A30Z&rscd=attachment%3B+filename%3Dhls.js-1.5.4-patch2.tgz&rsct=application%2Foctet-stream&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2026-11-09T23%3A30%3A18Z&ske=2026-11-10T00%3A30%3A30Z&sks=b&skv=2018-11-09&sig=9x9oAWL8%2BygY0Vra6nkxYLvSRk0T1FgmIqcRZSxogts%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc5NDI2NzQ4MywibmJmIjoxNzk0MjY3MTgzLCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.Cd3SLY7_eZQR2EQ5Ku-OhfQpJNiERAaa_K0rIAkBH34&response-content-disposition=attachment%3B%20filename%3Dhls.js-1.5.4-patch2.tgz&response-content-type=application%2Foctet-stream: {}
+  hls.js@https://github.com/Stremio/hls.js/releases/download/v1.5.4-patch2/hls.js-1.5.4-patch2.tgz: {}
 
   ieee754@1.2.1: {}
 
