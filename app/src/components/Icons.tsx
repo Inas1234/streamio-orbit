@@ -135,3 +135,24 @@ export const MagnetIcon = (p: P) => (
         <path d="M6 7h4M14 7h4" />
     </svg>
 );
+export const HomeIcon = (p: P) => (
+    <svg {...base(p)}>
+        <path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z" />
+    </svg>
+);
+export const TvIcon = (p: P) => (
+    <svg {...base(p)}>
+        <rect x="2.5" y="6" width="19" height="13" rx="2" />
+        <path d="m8 2.5 4 3.5 4-3.5" />
+    </svg>
+);
+export const ListIcon = (p: P) => (
+    <svg {...base(p)}>
+        <path d="M6 3.5h12a1 1 0 0 1 1 1V21l-7-4.5L5 21V4.5a1 1 0 0 1 1-1z" />
+    </svg>
+);
+export const PuzzleIcon = (p: P) => (
+    <svg {...base(p)}>
+        <path d="M10 3.5a2 2 0 1 1 4 0V5h4a1 1 0 0 1 1 1v4h-1.5a2 2 0 1 0 0 4H19v4a1 1 0 0 1-1 1h-4v-1.5a2 2 0 1 0-4 0V19H6a1 1 0 0 1-1-1v-4h1.5a2 2 0 1 0 0-4H5V6a1 1 0 0 1 1-1h4z" />
+    </svg>
+);

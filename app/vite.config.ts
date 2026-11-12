@@ -11,7 +11,8 @@ export default defineConfig({
         include: ['@stremio/stremio-video', '@stremio/stremio-core-web/stremio_core_web.js', 'eventemitter3'],
     },
     build: {
-        target: 'chrome110',
+        // The desktop app runs Chromium (WebView2); the web version also has to run in Safari on iPhones.
+        target: ['chrome110', 'safari16'],
         sourcemap: false,
         cssCodeSplit: true,
         rollupOptions: {

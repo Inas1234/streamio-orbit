@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { core } from '../core/core';
 import { useModel } from '../core/useModel';
-import type { Board, ContinueWatchingPreview, MetaPreview } from '../core/types';
+import type { Board, ContinueWatchingPreview, LibraryItem, MetaPreview } from '../core/types';
 import { Hero } from '../components/Hero';
 import { Row } from '../components/Row';
 import { libraryCard, previewCard } from '../lib/cards';
@@ -55,7 +55,8 @@ export function Home() {
     const cwCards = useMemo(
         () =>
             (cw?.items ?? [])
-                .map((i) => ('libraryItem' in i ? i.libraryItem : i))
+                // The player link may sit on the item or on its library entry, depending on the engine version.
+                .map((i) => ('libraryItem' in i ? { ...i.libraryItem, deepLinks: i.libraryItem.deepLinks ?? (i as { deepLinks?: LibraryItem['deepLinks'] }).deepLinks } : i))
                 .filter((i) => i && i.state)
                 .map((i) => libraryCard(i, { continueWatching: true })),
         [cw],

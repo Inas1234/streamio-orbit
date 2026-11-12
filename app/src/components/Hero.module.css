@@ -165,3 +165,32 @@
         display: none;
     }
 }
+
+@media (max-width: 760px) {
+    .hero {
+        height: 74vh;
+        min-height: 460px;
+        max-height: 640px;
+        padding-bottom: 28px;
+    }
+    .bg {
+        mask-image: linear-gradient(0deg, transparent 0%, #000 50%);
+        mask-composite: add;
+    }
+    .logo {
+        max-height: 96px;
+        max-width: 78%;
+    }
+    .logoWrap {
+        margin-bottom: 14px;
+    }
+    .title {
+        font-size: 48px;
+        margin-bottom: 12px;
+    }
+    .desc {
+        font-size: 14.5px;
+        margin: 10px 0 18px;
+        -webkit-line-clamp: 2;
+    }
+}

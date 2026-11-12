@@ -5,7 +5,8 @@ import { useModel } from '../core/useModel';
 import type { Addon, MetaDetails, MetaItem, Stream, Video } from '../core/types';
 import { Img } from '../components/Img';
 import { CheckIcon, EyeIcon, PlayIcon, PlusIcon, TrailerIcon } from '../components/Icons';
-import { openMenu } from '../components/menu';
+import { openMenu, type MenuEvent } from '../components/menu';
+import { longPress } from '../components/longPress';
 import { setEpisodeWatched, setSeasonWatched, setTitleWatched } from '../lib/actions';
 import { backdrop, castNames, directors, genres, logo, seasons, streamInfo, writers } from '../lib/meta';
 import { detailHref } from '../lib/cards';
@@ -324,54 +325,64 @@ const Episodes = memo(function Episodes({ meta, selectedId }: { meta: MetaItem; 
                 ))}
             </div>
             <ol className={s.episodes}>
-                {list.map((v) => (
-                    <li key={v.id}>
-                        <button
-                            className={`${s.episode} ${v.id === selectedId ? s.episodeOn : ''}`}
-                            onContextMenu={(e) => {
-                                const seasonWatched = list.length > 0 && list.every((x) => x.watched);
-                                openMenu(
-                                    e,
-                                    [
-                                        { label: 'Show sources', onSelect: () => navigate(detailHref(meta.type, meta.id, v.id), { replace: true }) },
-                                        { label: v.watched ? 'Mark episode as unwatched' : 'Mark episode as watched', onSelect: () => void setEpisodeWatched(v, !v.watched), separated: true },
-                                        ...(season !== undefined
-                                            ? [{ label: seasonWatched ? 'Mark season as unwatched' : 'Mark season as watched', onSelect: () => void setSeasonWatched(season, !seasonWatched) }]
-                                            : []),
-                                    ],
-                                    `${v.season !== undefined ? `S${v.season} · E${v.episode} · ` : ''}${v.title || ''}`,
-                                );
-                            }}
-                            onClick={() => navigate(detailHref(meta.type, meta.id, v.id), { replace: true })}
-                            onMouseEnter={() => {
-                                window.clearTimeout(hoverTimer.current);
-                                hoverTimer.current = window.setTimeout(() => prefetchStreams(meta.type, v.id), 300);
-                            }}
-                            onMouseLeave={() => window.clearTimeout(hoverTimer.current)}
-                        >
-                            <div className={s.thumb}>
-                                <Img src={v.thumbnail} alt="" />
-                                {v.progress > 0 && (
-                                    <div className={s.track}>
-                                        <div style={{ width: `${Math.min(100, v.progress)}%` }} />
-                                    </div>
-                                )}
-                                {v.watched && <span className={s.watched}>Watched</span>}
-                            </div>
-                            <div className={s.epText}>
-                                <div className={s.epTitle}>
-                                    <span className={s.epNum}>{v.episode}.</span> {v.title || `Episode ${v.episode}`}
+                {list.map((v) => {
+                    const showMenu = (e: MenuEvent) => {
+                        const seasonWatched = list.length > 0 && list.every((x) => x.watched);
+                        openMenu(
+                            e,
+                            [
+                                { label: 'Show sources', onSelect: () => navigate(detailHref(meta.type, meta.id, v.id), { replace: true }) },
+                                { label: v.watched ? 'Mark episode as unwatched' : 'Mark episode as watched', onSelect: () => void setEpisodeWatched(v, !v.watched), separated: true },
+                                ...(season !== undefined
+                                    ? [{ label: seasonWatched ? 'Mark season as unwatched' : 'Mark season as watched', onSelect: () => void setSeasonWatched(season, !seasonWatched) }]
+                                    : []),
+                            ],
+                            `${v.season !== undefined ? `S${v.season} · E${v.episode} · ` : ''}${v.title || ''}`,
+                        );
+                    };
+                    return (
+                        <li key={v.id}>
+                            <button
+                                className={`${s.episode} ${v.id === selectedId ? s.episodeOn : ''}`}
+                                onContextMenu={showMenu}
+                                {...longPress(showMenu)}
+                                onClick={() => {
+                                    navigate(detailHref(meta.type, meta.id, v.id), { replace: true });
+                                    // On phones the sources sit above the episode list: bring them into view.
+                                    if (PHONE.matches) document.getElementById('sources')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                }}
+                                onMouseEnter={() => {
+                                    window.clearTimeout(hoverTimer.current);
+                                    hoverTimer.current = window.setTimeout(() => prefetchStreams(meta.type, v.id), 300);
+                                }}
+                                onMouseLeave={() => window.clearTimeout(hoverTimer.current)}
+                            >
+                                <div className={s.thumb}>
+                                    <Img src={v.thumbnail} alt="" />
+                                    {v.progress > 0 && (
+                                        <div className={s.track}>
+                                            <div style={{ width: `${Math.min(100, v.progress)}%` }} />
+                                        </div>
+                                    )}
+                                    {v.watched && <span className={s.watched}>Watched</span>}
                                 </div>
-                                {v.overview && <p className={s.epDesc}>{v.overview}</p>}
-                                {v.released && <div className={s.epDate}>{formatDate(v.released, v.upcoming)}</div>}
-                            </div>
-                        </button>
-                    </li>
-                ))}
+                                <div className={s.epText}>
+                                    <div className={s.epTitle}>
+                                        <span className={s.epNum}>{v.episode}.</span> {v.title || `Episode ${v.episode}`}
+                                    </div>
+                                    {v.overview && <p className={s.epDesc}>{v.overview}</p>}
+                                    {v.released && <div className={s.epDate}>{formatDate(v.released, v.upcoming)}</div>}
+                                </div>
+                            </button>
+                        </li>
+                    );
+                })}
             </ol>
         </section>
     );
 });
+
+const PHONE = matchMedia('(max-width: 760px)');
 
 const formatDate = (iso: string, upcoming: boolean) => {
     const d = new Date(iso);
@@ -397,7 +408,7 @@ const Sources = memo(function Sources({ title, groups, waiting, onPlay }: Source
     const shown = filter === 'All' ? ready : ready.filter((r) => r.info.quality === filter);
 
     return (
-        <aside className={s.sources}>
+        <aside id="sources" className={s.sources}>
             <div className={s.sourcesHead}>
                 <div>
                     <div className={s.sourcesTitle}>Sources</div>

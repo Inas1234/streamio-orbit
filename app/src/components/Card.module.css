@@ -131,3 +131,40 @@
 .poster .shade {
     display: none;
 }
+
+/* Touch: a hold opens the menu, so the phone's own link preview stays out of the way. */
+.card {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+@media (hover: none) {
+    .card:hover {
+        transform: none;
+        box-shadow: none;
+    }
+    .card:hover .art img {
+        transform: none;
+    }
+    .card:active {
+        transform: scale(0.97);
+    }
+}
+@media (max-width: 760px) {
+    .title {
+        font-size: 18px;
+    }
+    .body {
+        left: 12px;
+        right: 12px;
+        bottom: 10px;
+    }
+    .ranked {
+        padding-left: 40px;
+    }
+    .rank {
+        font-size: 128px;
+        bottom: -10px;
+        -webkit-text-stroke-width: 2px;
+    }
+}

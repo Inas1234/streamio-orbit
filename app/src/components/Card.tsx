@@ -3,7 +3,8 @@ import { Link, useNavigate, useViewTransitionState } from 'react-router-dom';
 import type { MetaPreview } from '../core/types';
 import { Img } from './Img';
 import { cancelPreview, schedulePreview } from './preview';
-import { openMenu, type MenuAction } from './menu';
+import { openMenu, type MenuAction, type MenuEvent } from './menu';
+import { longPress } from './longPress';
 import s from './Card.module.css';
 
 export type CardData = {
@@ -32,6 +33,9 @@ export const Card = memo(function Card({ data, shape = 'wide', rank }: Props) {
     const clicked = useRef(false);
     const morphing = useViewTransitionState(data.href) && clicked.current;
 
+    const showMenu = data.menu ? (e: MenuEvent) => openMenu(e, data.menu!((href) => navigate(href, { viewTransition: true })), data.title) : undefined;
+    const hold = longPress(showMenu);
+
     const onEnter = () => {
         if (data.preview && ref.current) schedulePreview(ref.current, data);
     };
@@ -53,7 +57,8 @@ export const Card = memo(function Card({ data, shape = 'wide', rank }: Props) {
             onClick={() => {
                 clicked.current = true;
             }}
-            onContextMenu={(e) => data.menu && openMenu(e, data.menu((href) => navigate(href, { viewTransition: true })), data.title)}
+            onContextMenu={(e) => showMenu?.(e)}
+            {...hold}
         >
             <div className={s.art} style={morphing ? { viewTransitionName: 'art' } : undefined}>
                 <Img

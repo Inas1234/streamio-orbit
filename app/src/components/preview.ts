@@ -11,8 +11,12 @@ let timer = 0;
 const listeners = new Set<() => void>();
 const emit = () => listeners.forEach((l) => l());
 
+// Phones and tablets have no hover: a tap opens the title, a hold opens the menu.
+const noHover = typeof matchMedia === 'function' && matchMedia('(hover: none)').matches;
+
 export function schedulePreview(el: HTMLElement, data: CardData) {
     window.clearTimeout(timer);
+    if (noHover) return;
     timer = window.setTimeout(() => {
         // Only open if the pointer is still resting on this card.
         if (!el.matches(':hover') && document.activeElement !== el) return;

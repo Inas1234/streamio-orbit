@@ -105,3 +105,52 @@
         display: none;
     }
 }
+
+.tabBar {
+    display: none;
+}
+
+@media (max-width: 760px) {
+    .nav {
+        gap: 16px;
+        height: calc(var(--nav-h) + env(safe-area-inset-top));
+        padding-top: env(safe-area-inset-top);
+    }
+    .logo:hover {
+        transform: none;
+    }
+    .round,
+    .avatar {
+        width: 36px;
+        height: 36px;
+    }
+    .tabBar {
+        position: fixed;
+        inset: auto 0 0 0;
+        z-index: 50;
+        height: var(--tab-h);
+        padding-bottom: env(safe-area-inset-bottom);
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        background: color-mix(in oklab, var(--bg) 82%, transparent);
+        backdrop-filter: blur(18px) saturate(1.4);
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .tabBar a {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        font-size: 10.5px;
+        font-weight: 600;
+        color: var(--mute);
+        transition: color 0.15s;
+    }
+    .tabBar .tabOn {
+        color: var(--text);
+    }
+    .tabBar .tabOn svg {
+        color: var(--accent);
+    }
+}

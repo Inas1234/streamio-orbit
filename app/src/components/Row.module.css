@@ -84,3 +84,33 @@
     right: 0;
     background: linear-gradient(270deg, color-mix(in oklab, var(--bg) 92%, transparent), transparent);
 }
+
+@media (hover: none) {
+    .arrow {
+        display: none;
+    }
+}
+@media (max-width: 760px) {
+    .row {
+        margin-top: 18px;
+        contain-intrinsic-size: auto 190px;
+    }
+    .head {
+        margin-bottom: 4px;
+    }
+    .title {
+        font-size: 22px;
+    }
+    .scroller {
+        --card-w: 72vw;
+        gap: 10px;
+        padding-bottom: 10px;
+    }
+    .posters,
+    .rankedRow {
+        --poster-w: 34vw;
+    }
+    .rankedRow {
+        padding-bottom: 18px;
+    }
+}

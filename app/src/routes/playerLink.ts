@@ -25,3 +25,18 @@ export async function playerHref({ stream, streamAddon, metaAddon, type, id, vid
     if (metaAddon) params.set('metaTransportUrl', metaAddon.transportUrl);
     return `/player?${params.toString()}`;
 }
+
+/**
+ * Turns the engine's player link ("#/player/<stream>/<stream addon>/<meta addon>/<type>/<id>/<video>")
+ * into this app's player URL. The engine only has one for titles you've played on this device.
+ */
+export function playerHrefFromDeepLink(deepLink: string | null | undefined) {
+    // The engine may add "?position=<seconds>"; the player resumes from your library progress anyway.
+    const m = deepLink?.match(/\/player\/([^/]+)\/([^/]*)\/([^/]*)\/([^/]+)\/([^/]+)\/([^/?]+)(?:\?.*)?$/);
+    if (!m) return null;
+    const [stream, streamTransportUrl, metaTransportUrl, type, id, videoId] = m.slice(1).map(decodeURIComponent);
+    const params = new URLSearchParams({ stream, type, id, videoId });
+    if (streamTransportUrl) params.set('streamTransportUrl', streamTransportUrl);
+    if (metaTransportUrl) params.set('metaTransportUrl', metaTransportUrl);
+    return `/player?${params.toString()}`;
+}

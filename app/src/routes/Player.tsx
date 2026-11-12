@@ -62,6 +62,18 @@ const initialState: VideoState = {
 };
 
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 2];
+
+/** Phones and tablets: a tap shows the controls instead of pausing. */
+const TOUCH = typeof matchMedia === 'function' && matchMedia('(hover: none)').matches;
+
+/**
+ * Outside the desktop app, the browser's own player can't open every file (Safari has no MKV).
+ * These hand the link to a video app on the phone instead.
+ */
+const EXTERNAL_PLAYERS = [
+    { label: 'Open in VLC', href: (url: string) => `vlc-x-callback://x-callback-url/stream?url=${encodeURIComponent(url)}` },
+    { label: 'Open in Infuse', href: (url: string) => `infuse://x-callback-url/play?url=${encodeURIComponent(url)}` },
+];
 /** Same steps as Stremio. */
 const SUB_SIZES = [75, 100, 125, 150, 175, 200, 250];
 
@@ -302,7 +314,7 @@ export function Player() {
 
     // ---- controls ----
     const [visible, setVisible] = useState(true);
-    const [panel, setPanel] = useState<null | 'episodes' | 'subs' | 'speed'>(null);
+    const [panel, setPanel] = useState<null | 'episodes' | 'subs' | 'speed' | 'external'>(null);
     const hideTimer = useRef(0);
     const poke = useCallback(() => {
         setVisible(true);
@@ -329,6 +341,9 @@ export function Player() {
         if (document.fullscreenElement) {
             void document.exitFullscreen();
             shell.send('win-set-visibility', { fullscreen: false });
+        } else if (!document.documentElement.requestFullscreen) {
+            // iPhone: only the video itself can go full screen (in the system player).
+            setProp('fullscreen', true);
         } else {
             shell.send('win-set-visibility', { fullscreen: true });
             void document.documentElement.requestFullscreen().catch(() => {});
@@ -404,12 +419,24 @@ export function Player() {
         window.setTimeout(() => setPatienceOver(true), 8_000);
     };
     const loading = !shownError && (state.buffering !== false || state.duration === null);
+    // A direct link (debrid and the like) can be handed to another app on the web version.
+    const externalUrl = !shell.active && stream?.url && !stream.infoHash ? stream.url : null;
     const torrent = useTorrentStats(loading && stream?.infoHash ? stream.infoHash : null, server?.selected?.transportUrl ?? null);
 
     return (
         <div className={`${s.player} ${showControls ? '' : s.hideCursor}`} onMouseMove={poke} onClick={() => panel && setPanel(null)}>
             {/* The video engine overwrites its container's position, so it gets a full-size wrapper. */}
-            <div className={s.videoWrap} onClick={(e) => (e.stopPropagation(), panel ? setPanel(null) : togglePause())} onDoubleClick={toggleFullscreen}>
+            <div
+                className={s.videoWrap}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    if (panel) setPanel(null);
+                    else if (!TOUCH) togglePause();
+                    else if (visible) setVisible(false);
+                    else poke();
+                }}
+                onDoubleClick={TOUCH ? undefined : toggleFullscreen}
+            >
                 <div ref={containerRef} className={s.video} />
             </div>
 
@@ -420,7 +447,17 @@ export function Player() {
                     {meta?.background && <Img className={s.loadingBg} src={meta.background} alt="" />}
                 </div>
             )}
-            {shownError === 'server' ? (
+            {shownError === 'server' && !shell.active ? (
+                <div className={s.center}>
+                    <div className={s.error}>
+                        <h2>Torrents don't play on the web</h2>
+                        <p>The web version has no streaming server for torrents. Pick a debrid source (Real-Debrid and similar) instead.</p>
+                        <button className="btn btn-primary" onClick={leave}>
+                            Pick another source
+                        </button>
+                    </div>
+                </div>
+            ) : shownError === 'server' ? (
                 <div className={s.center}>
                     <div className={s.error}>
                         <h2>Torrents need Stremio installed</h2>
@@ -451,10 +488,18 @@ export function Player() {
                     <div className={s.center}>
                         <div className={s.error}>
                             <h2>Can't play this source</h2>
-                            <p>{shownError}</p>
-                            <button className="btn btn-primary" onClick={leave}>
-                                Pick another source
-                            </button>
+                            <p>{externalUrl ? "This browser can't play this file (often an MKV). A video app can." : shownError}</p>
+                            <div className={s.errorActions}>
+                                {externalUrl &&
+                                    EXTERNAL_PLAYERS.map((p) => (
+                                        <a key={p.label} className="btn btn-primary" href={p.href(externalUrl)}>
+                                            {p.label}
+                                        </a>
+                                    ))}
+                                <button className={`btn ${externalUrl ? 'btn-ghost' : 'btn-primary'}`} onClick={leave}>
+                                    Pick another source
+                                </button>
+                            </div>
                         </div>
                     </div>
                 )
@@ -468,7 +513,13 @@ export function Player() {
                     <div className={s.title}>{title}</div>
                     {subtitle && <div className={s.sub}>{subtitle}</div>}
                 </div>
-                <span style={{ width: 44 }} />
+                {externalUrl ? (
+                    <button className={`${s.textBtn} ${panel === 'external' ? s.on : ''}`} onClick={() => setPanel(panel === 'external' ? null : 'external')}>
+                        Open in…
+                    </button>
+                ) : (
+                    <span style={{ width: 44 }} />
+                )}
             </div>
 
             <div className={`${s.bottom} ${showControls ? '' : s.hidden}`} onClick={(e) => e.stopPropagation()}>
@@ -613,6 +664,20 @@ export function Player() {
                             onReset={subDelay !== 0 ? () => changeSubDelay(0) : undefined}
                         />
                     </div>
+                </div>
+            )}
+
+            {panel === 'external' && externalUrl && (
+                <div className={`${s.panel} ${s.topPanel}`} onClick={(e) => e.stopPropagation()}>
+                    <div className={s.panelHead}>Play in another app</div>
+                    {EXTERNAL_PLAYERS.map((p) => (
+                        <a key={p.label} className={s.option} href={p.href(externalUrl)}>
+                            {p.label}
+                        </a>
+                    ))}
+                    <button className={s.option} onClick={() => void navigator.clipboard?.writeText(externalUrl).then(() => setPanel(null))}>
+                        Copy link
+                    </button>
                 </div>
             )}
 

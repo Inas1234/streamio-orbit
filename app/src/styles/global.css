@@ -325,3 +325,37 @@ input {
         scroll-behavior: auto !important;
     }
 }
+
+/* ---------- phones ---------- */
+
+:root {
+    --tab-h: 0px;
+}
+@media (max-width: 760px) {
+    :root {
+        --nav-h: 56px;
+        --gutter: 16px;
+        --tab-h: calc(60px + env(safe-area-inset-bottom));
+    }
+    html,
+    body {
+        overflow-x: clip; /* artwork animations can poke past the edge; phones would let you pan to it */
+    }
+    body {
+        font-size: 15px;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .page {
+        padding-bottom: calc(var(--tab-h) + 28px);
+    }
+    .page-pad {
+        padding: calc(var(--nav-h) + env(safe-area-inset-top) + 16px) var(--gutter) calc(var(--tab-h) + 28px);
+    }
+    .page-title {
+        font-size: 44px;
+        margin-bottom: 18px;
+    }
+    .btn {
+        padding: 0 18px;
+    }
+}

@@ -513,3 +513,73 @@
 .desc {
     color: var(--text);
 }
+
+/* ---------- phones ---------- */
+@media (max-width: 760px) {
+    .backdrop {
+        width: 100%;
+        height: 62vh;
+        mask-image: linear-gradient(0deg, transparent 0%, #000 55%);
+        mask-composite: add;
+    }
+    .layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 28px;
+        padding-top: calc(var(--nav-h) + 26vh);
+        padding-bottom: calc(var(--tab-h) + 28px);
+    }
+    /* Sources come right after the title, then episodes, then cast. */
+    .main {
+        display: contents;
+    }
+    .main > * {
+        order: 4;
+        min-width: 0;
+    }
+    .main > :last-child {
+        order: 3;
+    }
+    .main > :first-child {
+        order: 1;
+    }
+    .sources {
+        order: 2;
+        scroll-margin-top: calc(var(--nav-h) + env(safe-area-inset-top) + 8px);
+    }
+    .section {
+        margin-top: 0;
+    }
+    .title {
+        font-size: 46px;
+        margin-bottom: 12px;
+    }
+    .logo {
+        max-height: 100px;
+    }
+    .playBtn {
+        flex: 1 1 100%;
+        justify-content: center;
+    }
+    .h2 {
+        font-size: 24px;
+    }
+    .episode {
+        gap: 12px;
+        padding: 8px;
+    }
+    .thumb {
+        flex-basis: 128px;
+    }
+    .epDesc {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        font-size: 13px;
+    }
+    .episode,
+    .source {
+        -webkit-touch-callout: none;
+        user-select: none;
+    }
+}

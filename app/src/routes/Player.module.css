@@ -489,3 +489,71 @@ button.stepValue:hover {
     color: rgba(255, 255, 255, 0.75);
     font-variant-numeric: tabular-nums;
 }
+
+.topPanel {
+    top: 76px;
+    bottom: auto;
+    width: 240px;
+}
+
+/* ---------- phones ---------- */
+@media (max-width: 760px) {
+    .top,
+    .bottom {
+        padding: 10px max(14px, env(safe-area-inset-right)) 10px max(14px, env(safe-area-inset-left));
+    }
+    .top {
+        padding-top: max(10px, env(safe-area-inset-top));
+        gap: 8px;
+    }
+    .bottom {
+        padding-top: 40px;
+        padding-bottom: max(12px, env(safe-area-inset-bottom));
+    }
+    .title {
+        font-size: 15px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .sub {
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .controls {
+        gap: 0;
+        margin-top: 4px;
+    }
+    /* Phones set the volume with their own buttons. */
+    .volume {
+        display: none;
+    }
+    .time {
+        font-size: 12px;
+        margin-left: 4px;
+    }
+    .iconBtn,
+    .textBtn {
+        height: 42px;
+        min-width: 40px;
+    }
+    .panel {
+        left: 8px;
+        right: 8px;
+        bottom: calc(96px + env(safe-area-inset-bottom));
+        width: auto;
+        max-height: 62vh;
+    }
+    .topPanel {
+        top: calc(60px + env(safe-area-inset-top));
+        bottom: auto;
+        left: auto;
+        width: 220px;
+    }
+    .error {
+        margin: 0 16px;
+        padding: 22px;
+    }
+}

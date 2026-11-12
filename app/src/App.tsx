@@ -3,12 +3,13 @@ import { createHashRouter, Outlet, RouterProvider, useLocation } from 'react-rou
 import { core, ctxAction } from './core/core';
 import { useModel } from './core/useModel';
 import type { StreamingServer } from './core/types';
-import { NavBar } from './components/NavBar';
+import { NavBar, TabBar } from './components/NavBar';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { PreviewLayer } from './components/PreviewLayer';
 import { ContextMenu } from './components/ContextMenu';
 import { closePreview } from './components/preview';
 import { resetAmbient } from './lib/ambient';
+import { shell } from './shell/shell';
 import { Home } from './routes/Home';
 import { Details } from './routes/Details';
 
@@ -50,7 +51,8 @@ function useAccountSync() {
  */
 function useStreamingServerRetry() {
     const server = useModel<StreamingServer>('streaming_server');
-    const failed = server?.settings?.type === 'Err';
+    // Only the desktop app has a server of its own to wait for.
+    const failed = shell.active && server?.settings?.type === 'Err';
     const attempt = useRef(0);
     useEffect(() => {
         if (!failed) {
@@ -83,6 +85,7 @@ function Layout() {
                 so anything painted here would tint the picture. */}
             {!inPlayer && <div className="ambient" aria-hidden />}
             {!inPlayer && <NavBar />}
+            {!inPlayer && <TabBar />}
             {!inPlayer && <PreviewLayer />}
             {!inPlayer && <ContextMenu />}
             <ErrorBoundary resetKey={pathname}>

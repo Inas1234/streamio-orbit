@@ -2,16 +2,16 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useModel } from '../core/useModel';
 import type { Ctx } from '../core/types';
-import { SearchIcon } from './Icons';
+import { FilmIcon, HomeIcon, ListIcon, PuzzleIcon, SearchIcon, TvIcon } from './Icons';
 import { Logo } from './Logo';
 import s from './NavBar.module.css';
 
 const LINKS = [
-    { to: '/', label: 'Home', end: true },
-    { to: '/discover/movie', label: 'Movies' },
-    { to: '/discover/series', label: 'Series' },
-    { to: '/library', label: 'My List' },
-    { to: '/addons', label: 'Addons' },
+    { to: '/', label: 'Home', end: true, Icon: HomeIcon },
+    { to: '/discover/movie', label: 'Movies', Icon: FilmIcon },
+    { to: '/discover/series', label: 'Series', Icon: TvIcon },
+    { to: '/library', label: 'My List', Icon: ListIcon },
+    { to: '/addons', label: 'Addons', Icon: PuzzleIcon },
 ];
 
 export function NavBar() {
@@ -48,5 +48,19 @@ export function NavBar() {
                 </Link>
             </div>
         </header>
+    );
+}
+
+/** On phones the menu moves to a tab bar at the bottom, within thumb reach. */
+export function TabBar() {
+    return (
+        <nav className={s.tabBar} aria-label="Main">
+            {LINKS.map(({ to, label, end, Icon }) => (
+                <NavLink key={to} to={to} end={end} className={({ isActive }) => (isActive ? s.tabOn : undefined)}>
+                    <Icon size={22} />
+                    <span>{label}</span>
+                </NavLink>
+            ))}
+        </nav>
     );
 }

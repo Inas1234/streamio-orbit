@@ -1,5 +1,8 @@
 // One right-click menu for the whole app. Anything can open it with a list of actions.
-import { useSyncExternalStore, type MouseEvent } from 'react';
+import { useSyncExternalStore } from 'react';
+
+/** A right-click, or a long press on a touch screen. */
+export type MenuEvent = { clientX: number; clientY: number; preventDefault?: () => void; stopPropagation?: () => void };
 
 export type MenuAction = {
     label: string;
@@ -15,9 +18,9 @@ let state: MenuState = null;
 const listeners = new Set<() => void>();
 const emit = () => listeners.forEach((l) => l());
 
-export function openMenu(event: MouseEvent, actions: MenuAction[], title?: string) {
-    event.preventDefault(); // also stops the browser's own menu
-    event.stopPropagation();
+export function openMenu(event: MenuEvent, actions: MenuAction[], title?: string) {
+    event.preventDefault?.(); // also stops the browser's own menu
+    event.stopPropagation?.();
     if (!actions.length) return;
     state = { x: event.clientX, y: event.clientY, title, actions };
     emit();
