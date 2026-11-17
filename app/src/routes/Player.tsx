@@ -23,6 +23,7 @@ import {
     VolumeIcon,
 } from '../components/Icons';
 import { Img } from '../components/Img';
+import type { RemuxSession } from '../player/remux/RemuxSession';
 import s from './Player.module.css';
 
 type Track = { id: string; label?: string; lang?: string; origin?: string };
@@ -74,6 +75,18 @@ const EXTERNAL_PLAYERS = [
     { label: 'Open in VLC', href: (url: string) => `vlc-x-callback://x-callback-url/stream?url=${encodeURIComponent(url)}` },
     { label: 'Open in Infuse', href: (url: string) => `infuse://x-callback-url/play?url=${encodeURIComponent(url)}` },
 ];
+/** Files the web version found it can't decode on this device (set as the player error). */
+const UNPLAYABLE: Record<string, { title: string; text: string }> = {
+    'unplayable-audio': {
+        title: "This file's sound can't play on this device",
+        text: "Its audio is in a format this device can't play (DTS or TrueHD). Pick another source, or open it in VLC or Infuse.",
+    },
+    'unplayable-video': {
+        title: "This video format can't play here",
+        text: 'Pick another source, or open it in VLC or Infuse.',
+    },
+};
+
 /** Same steps as Stremio. */
 const SUB_SIZES = [75, 100, 125, 150, 175, 200, 250];
 
@@ -128,6 +141,8 @@ export function Player() {
     // ---- video engine ----
     const containerRef = useRef<HTMLDivElement>(null);
     const videoRef = useRef<any>(null);
+    /** Web version: the on-device repackager for the current MKV, if any. */
+    const sessionRef = useRef<RemuxSession | null>(null);
     const [state, setState] = useState<VideoState>(initialState);
     const [error, setError] = useState<string | null>(null);
 
@@ -211,6 +226,9 @@ export function Player() {
         video.on('implementationChanged', (manifest: { props: string[] }) => {
             manifest.props.forEach((propName) => dispatchVideo({ type: 'observeProp', propName }));
             applySubtitleStyleRef.current();
+            // The repackaged-file player needs the <video> element before it gets its source.
+            const el = containerRef.current?.querySelector('video');
+            if (el && sessionRef.current) sessionRef.current.bind(el);
         });
         video.on('ended', () => endedRef.current());
         if (shell.active) document.body.classList.add('playing');
@@ -222,6 +240,8 @@ export function Player() {
                 /* ignore */
             }
             videoRef.current = null;
+            sessionRef.current?.destroy();
+            sessionRef.current = null;
         };
     }, []);
 
@@ -238,11 +258,14 @@ export function Player() {
         setError(null);
         const lib = player.libraryItem;
         const startAt = lib?.state && lib.state.video_id === videoId ? lib.state.timeOffset : 0;
-        dispatchVideo({
+        const content = player.stream.content;
+        sessionRef.current?.destroy();
+        sessionRef.current = null;
+        const loadWith = (st: Stream, viaServer = true) => dispatchVideo({
             type: 'command',
             commandName: 'load',
             commandArgs: {
-                stream: { ...player.stream.content, subtitles: [] },
+                stream: { ...st, subtitles: [] },
                 autoplay: true,
                 time: startAt,
                 forceTranscoding: false,
@@ -253,9 +276,36 @@ export function Player() {
                 // (anything else selects 'libmpv', which plays sound with no picture in this shell).
                 platform: 'windows',
                 videoMode: (settings as { videoMode?: string | null } | undefined)?.videoMode ?? null,
-                streamingServerURL: server?.baseUrl ? server.selected?.transportUrl ?? server.baseUrl : null,
+                streamingServerURL: viaServer && server?.baseUrl ? server.selected?.transportUrl ?? server.baseUrl : null,
                 seriesInfo: player.seriesInfo,
             },
+        });
+        // Web version, direct link: MKV files are repackaged on this device so the browser can play them.
+        if (shell.active || !content.url || content.infoHash) {
+            loadWith(content);
+            return;
+        }
+        // Stop whatever was playing while the next file is looked up.
+        dispatchVideo({ type: 'command', commandName: 'unload' });
+        // Loaded on demand: the file reader is large and the desktop app never needs it.
+        const url = content.url;
+        void import('../player/webSource')
+            .then(({ prepareWebStream }) => prepareWebStream(url, { start: startAt / 1000, preferredLang: settings?.audioLanguage ?? null }))
+            .catch(() => ({ kind: 'direct' as const, url }))
+            .then((plan) => {
+            if (loadedFor.current !== key || !videoRef.current) {
+                if (plan.kind === 'remux') plan.session.destroy();
+                return;
+            }
+            if (plan.kind === 'unplayable') setError(`unplayable-${plan.reason}`);
+            else if (plan.kind === 'direct') loadWith(content);
+            else {
+                sessionRef.current = plan.session;
+                plan.session.onError = () => setError('Playback failed');
+                // The content-type hint stops the engine from asking the object URL for its type.
+                const behaviorHints = { ...content.behaviorHints, proxyHeaders: { response: { 'content-type': 'video/mp4' } } };
+                loadWith({ ...content, url: plan.session.url, behaviorHints } as Stream, false);
+            }
         });
     }, [player, server, settings, encoded, videoId, dispatchVideo]);
 
@@ -487,8 +537,11 @@ export function Player() {
                 shownError && (
                     <div className={s.center}>
                         <div className={s.error}>
-                            <h2>Can't play this source</h2>
-                            <p>{externalUrl ? "This browser can't play this file (often an MKV). A video app can." : shownError}</p>
+                            <h2>{UNPLAYABLE[shownError]?.title ?? "Can't play this source"}</h2>
+                            <p>
+                                {UNPLAYABLE[shownError]?.text ??
+                                    (externalUrl ? "This browser can't play this file. A video app can." : shownError)}
+                            </p>
                             <div className={s.errorActions}>
                                 {externalUrl &&
                                     EXTERNAL_PLAYERS.map((p) => (

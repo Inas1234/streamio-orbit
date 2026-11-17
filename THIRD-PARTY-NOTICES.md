@@ -17,6 +17,7 @@ the links given.
 | @stremio/stremio-core-web | Stremio's engine (accounts, addons, library) | MIT | https://github.com/Stremio/stremio-core |
 | @stremio/stremio-video | Video engine bridge | MIT | https://github.com/Stremio/stremio-video |
 | React, React DOM, React Router, eventemitter3, @babel/runtime | Interface | MIT | https://www.npmjs.com |
+| Mediabunny | Repackaging MKV files for playback in the web version | MPL-2.0 | https://github.com/Vanilagy/mediabunny |
 | Archivo (font) | Interface typeface | SIL Open Font License 1.1 | https://fonts.google.com/specimen/Archivo |
 
 Not bundled: Stremio's streaming server (`server.js`, `stremio-runtime.exe`) is not open source.
