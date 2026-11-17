@@ -36,9 +36,20 @@ function formatOf(mime: string): OpenedFile['format'] {
     return 'other';
 }
 
+/**
+ * Seconds to wait before retrying a failed read, or null to give up: 1, 2, 4, 8, 8, 8.
+ * Mediabunny's own rule never retries what looks like a browser block, and Safari reports a dropped
+ * connection (Wi-Fi to mobile, screen lock) the same way, so a short blip would end playback.
+ */
+export function retryDelay(previousAttempts: number): number | null {
+    if (previousAttempts > 6) return null;
+    return Math.min(2 ** (previousAttempts - 1), 8);
+}
+
 /** Opens a file by link (read in pieces with byte ranges) or from memory. Only the header is read here. */
 export async function openFile(src: string | Blob): Promise<OpenedFile> {
-    const source = typeof src === 'string' ? new UrlSource(src, { maxCacheSize: 32 * 1024 * 1024 }) : new BlobSource(src);
+    const source =
+        typeof src === 'string' ? new UrlSource(src, { maxCacheSize: 32 * 1024 * 1024, getRetryDelay: retryDelay }) : new BlobSource(src);
     const input = new Input({ source, formats: ALL_FORMATS });
     try {
         const [mime, video, audio] = await Promise.all([input.getMimeType(), input.getVideoTracks(), input.getAudioTracks()]);

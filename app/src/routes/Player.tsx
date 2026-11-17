@@ -285,6 +285,8 @@ export function Player() {
             loadWith(content);
             return;
         }
+        // Stop whatever was playing while the next file is looked up.
+        dispatchVideo({ type: 'command', commandName: 'unload' });
         // Loaded on demand: the file reader is large and the desktop app never needs it.
         const url = content.url;
         void import('../player/webSource')

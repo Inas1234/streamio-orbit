@@ -9,11 +9,22 @@ import type { InputAudioTrack, InputVideoTrack } from 'mediabunny';
 import { remuxFrom, type OpenedFile } from './remux';
 
 const AHEAD = 60;
+const MIN_AHEAD = 10;
 const BEHIND = 30;
 
 type Tracks = { video: InputVideoTrack; audio: InputAudioTrack | null };
 
 const ManagedMS = (globalThis as { ManagedMediaSource?: typeof MediaSource }).ManagedMediaSource;
+
+/**
+ * Whether playing at `t` needs a new read from there: true unless `t` is already loaded, or sits just
+ * ahead of where the current read has got to (then it simply arrives shortly).
+ */
+export function needsRestart(t: number, loaded: Array<[number, number]>, readFrom: number, readTo: number) {
+    if (loaded.some(([s, e]) => s - 0.3 <= t && t <= e)) return false;
+    const justAhead = t >= Math.max(readFrom, readTo) - 0.5 && t <= readTo + 5;
+    return !justAhead;
+}
 
 export function mediaSourceClass(): typeof MediaSource | null {
     return ManagedMS ?? (typeof MediaSource === 'function' ? MediaSource : null);
@@ -32,6 +43,8 @@ export class RemuxSession {
     private readFrom = 0;
     private readTo = 0;
     private streaming = true;
+    /** Seconds to keep loaded ahead; lowered if the browser runs out of room. */
+    private aheadLimit = AHEAD;
     private wakers: Array<() => void> = [];
     private destroyed = false;
     private readonly cleanups: Array<() => void> = [];
@@ -54,6 +67,8 @@ export class RemuxSession {
         this.listen(this.ms, 'endstreaming', () => {
             this.streaming = false;
         });
+        // ManagedMediaSource may drop loaded data on its own (low memory).
+        this.listen(this.ms, 'bufferedchange', () => this.checkPosition());
     }
 
     /** Call once the player has made its <video> element, before it gets `url` as its source. */
@@ -62,7 +77,9 @@ export class RemuxSession {
         this.video = video;
         // Required for ManagedMediaSource on iPhone (otherwise the source never opens).
         video.disableRemotePlayback = true;
-        this.listen(video, 'seeking', () => this.onSeeking());
+        // Also when stalled: the browser may have dropped loaded data the read already went past.
+        this.listen(video, 'seeking', () => this.checkPosition());
+        this.listen(video, 'waiting', () => this.checkPosition());
         for (const ev of ['timeupdate', 'progress', 'playing', 'seeked']) this.listen(video, ev, () => this.wake());
     }
 
@@ -127,15 +144,22 @@ export class RemuxSession {
 
     private async append(bytes: Uint8Array, signal: AbortSignal) {
         // The init segment always goes in; media waits while enough is loaded or the system says pause.
-        while (!signal.aborted && this.readTo > this.readFrom && (!this.streaming || this.ahead() >= AHEAD)) await this.sleep();
+        while (!signal.aborted && this.readTo > this.readFrom && (!this.streaming || this.ahead() >= this.aheadLimit)) await this.sleep();
         if (signal.aborted) return;
         await this.trimBehind(BEHIND);
-        try {
-            await this.appendRaw(bytes);
-        } catch (e) {
-            if ((e as DOMException)?.name !== 'QuotaExceededError') throw e;
-            await this.trimBehind(5);
-            await this.appendRaw(bytes);
+        // Big files (4K) can hit the browser's memory limit well before a minute ahead: then keep less
+        // loaded ahead, and wait for playback to use some up before adding more.
+        for (let tries = 0; ; tries++) {
+            try {
+                await this.appendRaw(bytes);
+                break;
+            } catch (e) {
+                if ((e as DOMException)?.name !== 'QuotaExceededError' || tries >= 60) throw e;
+                if (signal.aborted) return;
+                await this.trimBehind(5);
+                this.aheadLimit = Math.max(MIN_AHEAD, Math.min(this.aheadLimit, this.ahead() - 5));
+                if (tries > 0) await this.sleep();
+            }
         }
         const now = this.video?.currentTime ?? this.readFrom;
         this.readTo = Math.max(this.readTo, this.rangeEnd(Math.max(now, this.readFrom)) ?? this.readTo, this.readFrom + 0.001);
@@ -188,13 +212,13 @@ export class RemuxSession {
 
     // ---- seeking ----
 
-    private onSeeking() {
+    private checkPosition() {
         const t = this.video?.currentTime;
-        if (t === undefined || this.destroyed || !this.sb) return;
-        if (this.rangeEnd(t) !== null) return; // already loaded
-        // Just ahead of what the current read is about to deliver: let it catch up instead of restarting.
-        if (t >= this.readFrom - 0.5 && t <= this.readTo + 5) return;
-        this.startReading(t);
+        const b = this.sb?.buffered;
+        if (t === undefined || this.destroyed || !b) return;
+        const loaded: Array<[number, number]> = [];
+        for (let i = 0; i < b.length; i++) loaded.push([b.start(i), b.end(i)]);
+        if (needsRestart(t, loaded, this.readFrom, this.readTo)) this.startReading(t);
     }
 
     // ---- helpers ----
